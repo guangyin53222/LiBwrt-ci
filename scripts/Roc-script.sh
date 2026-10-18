@@ -305,10 +305,7 @@ if package_enabled luci-app-gecoosac gecoosac; then
   clone_repository https://github.com/laipeng668/luci-app-gecoosac main package/luci-app-gecoosac
 fi
 
-if package_enabled luci-app-athena-led luci-i18n-athena-led-zh-cn; then
-  clone_repository https://github.com/NONGFAH/luci-app-athena-led main package/luci-app-athena-led
-  chmod +x package/luci-app-athena-led/root/etc/init.d/athena_led package/luci-app-athena-led/root/usr/sbin/athena-led
-fi
+
 
 ### PassWall & OpenClash ###
 
