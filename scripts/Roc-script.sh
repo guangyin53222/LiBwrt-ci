@@ -305,20 +305,37 @@ if package_enabled luci-app-gecoosac gecoosac; then
   clone_repository https://github.com/laipeng668/luci-app-gecoosac main package/luci-app-gecoosac
 fi
 
-# Athena LED（京东云雅典娜 RE-CS-02 点阵屏）
-# 已随仓库放在 package/emortal/athena-led 和 package/emortal/luci-app-athena-led
+# Athena LED（京东云雅典娜 RE-CS-02 点阵屏） - 使用 guangyin53222 增强版
 if package_enabled luci-app-athena-led athena-led; then
-  if [ -d package/emortal/luci-app-athena-led ]; then
-    echo "Use local athena-led LuCI app from package/emortal/"
-    chmod +x \
-      package/emortal/luci-app-athena-led/root/etc/init.d/athena_led \
-      package/emortal/luci-app-athena-led/root/usr/sbin/athena-led 2>/dev/null || true
-  else
-    clone_repository https://github.com/NONGFAH/luci-app-athena-led main package/luci-app-athena-led
-    chmod +x \
-      package/luci-app-athena-led/root/etc/init.d/athena_led \
-      package/luci-app-athena-led/root/usr/sbin/athena-led
+  # 清理旧版或冲突包
+  rm -rf feeds/luci/applications/luci-app-athena-led \
+         feeds/packages/utils/athena-led \
+         package/emortal/luci-app-athena-led \
+         package/emortal/athena-led \
+         package/athena-led package/luci-app-athena-led
+
+  # 克隆完整仓库到临时目录
+  clone_repository https://github.com/guangyin53222/JDC-AX6600-Athena-LED-Controller main package/JDC-AX6600-Athena-LED-Controller
+
+  # 移动核心驱动 (athena-led)
+  if [ -d package/JDC-AX6600-Athena-LED-Controller/athena-led ]; then
+    mv package/JDC-AX6600-Athena-LED-Controller/athena-led package/athena-led
   fi
+
+  # 移动 LuCI 应用 (luci-app-athena-led)
+  if [ -d package/JDC-AX6600-Athena-LED-Controller/luci-app-athena-led ]; then
+    mv package/JDC-AX6600-Athena-LED-Controller/luci-app-athena-led package/luci-app-athena-led
+  fi
+
+  # 清理临时目录
+  rm -rf package/JDC-AX6600-Athena-LED-Controller
+
+  # 赋予可执行权限（适配新版本路径）
+  chmod +x \
+    package/athena-led/root/etc/init.d/athena_led \
+    package/athena-led/root/usr/sbin/athena-led \
+    package/luci-app-athena-led/root/etc/init.d/athena_led \
+    package/luci-app-athena-led/root/usr/sbin/athena-led 2>/dev/null || true
 fi
 
 ### PassWall & OpenClash ###
