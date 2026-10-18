@@ -250,6 +250,23 @@ jobs:
           "$GITHUB_WORKSPACE/$CONFIG_FILE" \
           "$GITHUB_WORKSPACE/$GENERAL_CONFIG_FILE"
 
+    # ═══════════════════════════════════════════════════════════
+    # ✅ 新增：files 大法（自动加载仓库根目录 files/ 到固件）
+    # ═══════════════════════════════════════════════════════════
+    - name: Load Files Overlay (files 大法)
+      run: |
+        if [ -d "$GITHUB_WORKSPACE/files" ]; then
+          echo "✅ 检测到 files 目录，启用 files 大法"
+          rm -rf "$OPENWRT_PATH/files"
+          cp -rf "$GITHUB_WORKSPACE/files" "$OPENWRT_PATH/files"
+          echo "📁 已复制 files 到 $OPENWRT_PATH/files"
+          echo "📋 files 目录内容："
+          find "$OPENWRT_PATH/files" -type f | sed "s|$OPENWRT_PATH/files/||" | sort
+        else
+          echo "⚠️ 未检测到 $GITHUB_WORKSPACE/files 目录，跳过 files 大法"
+          echo "💡 提示：如需预置文件到固件，请在仓库根目录创建 files/ 目录"
+        fi
+
     - name: Download DL Package(下载DL软件包)
       env:
         CONFIG_FILE: ${{ inputs.config_file }}
